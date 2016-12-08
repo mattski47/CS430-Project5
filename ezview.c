@@ -310,58 +310,71 @@ static void error_callback(int error, const char* description)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (action == GLFW_PRESS) {
+    if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 		switch(key)
 		{
 			case GLFW_KEY_ESCAPE:
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 				break;
 			case GLFW_KEY_UP:
-				vertices[0].position[1] -= 0.1;
-				vertices[1].position[1] -= 0.1;
-				vertices[2].position[1] -= 0.1;
-				vertices[3].position[1] -= 0.1;
+				vertices[0].position[1] -= 0.05;
+				vertices[1].position[1] -= 0.05;
+				vertices[2].position[1] -= 0.05;
+				vertices[3].position[1] -= 0.05;
 				break;
 			case GLFW_KEY_RIGHT:
-				vertices[0].position[0] += 0.1;
-				vertices[1].position[0] += 0.1;
-				vertices[2].position[0] += 0.1;
-				vertices[3].position[0] += 0.1;
+				vertices[0].position[0] += 0.05;
+				vertices[1].position[0] += 0.05;
+				vertices[2].position[0] += 0.05;
+				vertices[3].position[0] += 0.05;
 				break;
 			case GLFW_KEY_DOWN:
-				vertices[0].position[1] += 0.1;
-				vertices[1].position[1] += 0.1;
-				vertices[2].position[1] += 0.1;
-				vertices[3].position[1] += 0.1;
+				vertices[0].position[1] += 0.05;
+				vertices[1].position[1] += 0.05;
+				vertices[2].position[1] += 0.05;
+				vertices[3].position[1] += 0.05;
 				break;
 			case GLFW_KEY_LEFT:
-				vertices[0].position[0] -= 0.1;
-				vertices[1].position[0] -= 0.1;
-				vertices[2].position[0] -= 0.1;
-				vertices[3].position[0] -= 0.1;
+				vertices[0].position[0] -= 0.05;
+				vertices[1].position[0] -= 0.05;
+				vertices[2].position[0] -= 0.05;
+				vertices[3].position[0] -= 0.05;
 				break;
 			case GLFW_KEY_W:
-				vertices[0].position[0] *= 1.1;
-				vertices[0].position[1] *= 1.1;
-				vertices[1].position[0] *= 1.1;
-				vertices[1].position[1] *= 1.1;
-				vertices[2].position[0] *= 1.1;
-				vertices[2].position[1] *= 1.1;
-				vertices[3].position[0] *= 1.1;
-				vertices[3].position[1] *= 1.1;
+				vertices[0].position[0] *= 1.05;
+				vertices[0].position[1] *= 1.05;
+				vertices[1].position[0] *= 1.05;
+				vertices[1].position[1] *= 1.05;
+				vertices[2].position[0] *= 1.05;
+				vertices[2].position[1] *= 1.05;
+				vertices[3].position[0] *= 1.05;
+				vertices[3].position[1] *= 1.05;
 				break;
 			case GLFW_KEY_S:
-				vertices[0].position[0] *= 0.9;
-				vertices[0].position[1] *= 0.9;
-				vertices[1].position[0] *= 0.9;
-				vertices[1].position[1] *= 0.9;
-				vertices[2].position[0] *= 0.9;
-				vertices[2].position[1] *= 0.9;
-				vertices[3].position[0] *= 0.9;
-				vertices[3].position[1] *= 0.9;
+				vertices[0].position[0] *= 0.95;
+				vertices[0].position[1] *= 0.95;
+				vertices[1].position[0] *= 0.95;
+				vertices[1].position[1] *= 0.95;
+				vertices[2].position[0] *= 0.95;
+				vertices[2].position[1] *= 0.95;
+				vertices[3].position[0] *= 0.95;
+				vertices[3].position[1] *= 0.95;
+				break;
+			case GLFW_KEY_D:
+				vertices[0].position[0] += 0.05;
+				vertices[3].position[0] += 0.05;
+				vertices[2].position[0] += -0.05;
+				vertices[1].position[0] += -0.05;
+				break;
+			case GLFW_KEY_A:
+				vertices[0].position[0] += -0.05;
+				vertices[3].position[0] += -0.05;
+				vertices[2].position[0] += 0.05;
+				vertices[1].position[0] += 0.05;
 				break;
 			default:
-				printf("Invalid key.\n");
+				if (action != GLFW_REPEAT)
+					printf("Invalid key.\n");
 				break;
 		}
 	}
