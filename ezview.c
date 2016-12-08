@@ -9,9 +9,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <math.h>
 #include <assert.h>
 
 #define CHANNEL_SIZE 255
+
+static inline float sqr(float v) {
+    return v*v;
+}
 
 typedef struct {
 	float position[2];
@@ -310,6 +315,10 @@ static void error_callback(int error, const char* description)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	float centerx, tempx;
+	float centery, tempy;
+	float angle = 0.0872665;
+	
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 		switch(key)
 		{
@@ -371,6 +380,54 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				vertices[3].position[0] += -0.05;
 				vertices[2].position[0] += 0.05;
 				vertices[1].position[0] += 0.05;
+				break;
+			case GLFW_KEY_E:
+				centerx = (vertices[0].position[0] + vertices[2].position[0]) / 2;
+				centery = (vertices[0].position[1] + vertices[2].position[1]) / 2;
+				
+				tempx = ((vertices[0].position[0] - centerx) * cos(angle) - (vertices[0].position[1] - centery) * sin(angle)) + centerx;
+				tempy = ((vertices[0].position[0] - centerx) * sin(angle) + (vertices[0].position[1] - centery) * cos(angle)) + centery;
+				vertices[0].position[0] = tempx;
+				vertices[0].position[1] = tempy;
+				
+				tempx = ((vertices[1].position[0] - centerx) * cos(angle) - (vertices[1].position[1] - centery) * sin(angle)) + centerx;
+				tempy = ((vertices[1].position[0] - centerx) * sin(angle) + (vertices[1].position[1] - centery) * cos(angle)) + centery;
+				vertices[1].position[0] = tempx;
+				vertices[1].position[1] = tempy;
+				
+				tempx = ((vertices[2].position[0] - centerx) * cos(angle) - (vertices[2].position[1] - centery) * sin(angle)) + centerx;
+				tempy = ((vertices[2].position[0] - centerx) * sin(angle) + (vertices[2].position[1] - centery) * cos(angle)) + centery;
+				vertices[2].position[0] = tempx;
+				vertices[2].position[1] = tempy;
+				
+				tempx = ((vertices[3].position[0] - centerx) * cos(angle) - (vertices[3].position[1] - centery) * sin(angle)) + centerx;
+				tempy = ((vertices[3].position[0] - centerx) * sin(angle) + (vertices[3].position[1] - centery) * cos(angle)) + centery;
+				vertices[3].position[0] = tempx;
+				vertices[3].position[1] = tempy;
+				break;
+			case GLFW_KEY_Q:
+				centerx = (vertices[0].position[0] + vertices[2].position[0]) / 2;
+				centery = (vertices[0].position[1] + vertices[2].position[1]) / 2;
+				
+				tempx = ((vertices[0].position[0] - centerx) * cos(-angle) - (vertices[0].position[1] - centery) * sin(-angle)) + centerx;
+				tempy = ((vertices[0].position[0] - centerx) * sin(-angle) + (vertices[0].position[1] - centery) * cos(-angle)) + centery;
+				vertices[0].position[0] = tempx;
+				vertices[0].position[1] = tempy;
+				
+				tempx = ((vertices[1].position[0] - centerx) * cos(-angle) - (vertices[1].position[1] - centery) * sin(-angle)) + centerx;
+				tempy = ((vertices[1].position[0] - centerx) * sin(-angle) + (vertices[1].position[1] - centery) * cos(-angle)) + centery;
+				vertices[1].position[0] = tempx;
+				vertices[1].position[1] = tempy;
+				
+				tempx = ((vertices[2].position[0] - centerx) * cos(-angle) - (vertices[2].position[1] - centery) * sin(-angle)) + centerx;
+				tempy = ((vertices[2].position[0] - centerx) * sin(-angle) + (vertices[2].position[1] - centery) * cos(-angle)) + centery;
+				vertices[2].position[0] = tempx;
+				vertices[2].position[1] = tempy;
+				
+				tempx = ((vertices[3].position[0] - centerx) * cos(-angle) - (vertices[3].position[1] - centery) * sin(-angle)) + centerx;
+				tempy = ((vertices[3].position[0] - centerx) * sin(-angle) + (vertices[3].position[1] - centery) * cos(-angle)) + centery;
+				vertices[3].position[0] = tempx;
+				vertices[3].position[1] = tempy;
 				break;
 			default:
 				if (action != GLFW_REPEAT)
