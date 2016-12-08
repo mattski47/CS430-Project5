@@ -317,10 +317,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 				break;
 			case GLFW_KEY_UP:
-				vertices[0].position[1] += -0.1;
-				vertices[1].position[1] += -0.1;
-				vertices[2].position[1] += -0.1;
-				vertices[3].position[1] += -0.1;
+				vertices[0].position[1] -= 0.1;
+				vertices[1].position[1] -= 0.1;
+				vertices[2].position[1] -= 0.1;
+				vertices[3].position[1] -= 0.1;
 				break;
 			case GLFW_KEY_RIGHT:
 				vertices[0].position[0] += 0.1;
@@ -335,10 +335,30 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				vertices[3].position[1] += 0.1;
 				break;
 			case GLFW_KEY_LEFT:
-				vertices[0].position[0] += -0.1;
-				vertices[1].position[0] += -0.1;
-				vertices[2].position[0] += -0.1;
-				vertices[3].position[0] += -0.1;
+				vertices[0].position[0] -= 0.1;
+				vertices[1].position[0] -= 0.1;
+				vertices[2].position[0] -= 0.1;
+				vertices[3].position[0] -= 0.1;
+				break;
+			case GLFW_KEY_W:
+				vertices[0].position[0] *= 1.1;
+				vertices[0].position[1] *= 1.1;
+				vertices[1].position[0] *= 1.1;
+				vertices[1].position[1] *= 1.1;
+				vertices[2].position[0] *= 1.1;
+				vertices[2].position[1] *= 1.1;
+				vertices[3].position[0] *= 1.1;
+				vertices[3].position[1] *= 1.1;
+				break;
+			case GLFW_KEY_S:
+				vertices[0].position[0] *= 0.9;
+				vertices[0].position[1] *= 0.9;
+				vertices[1].position[0] *= 0.9;
+				vertices[1].position[1] *= 0.9;
+				vertices[2].position[0] *= 0.9;
+				vertices[2].position[1] *= 0.9;
+				vertices[3].position[0] *= 0.9;
+				vertices[3].position[1] *= 0.9;
 				break;
 			default:
 				printf("Invalid key.\n");
