@@ -123,7 +123,7 @@ int main(int argc, char** argv)
     // get width and height
     fscanf(sourcefp, "%d", &w);
     fscanf(sourcefp, "%d", &h);
-	printf("%d %d", w, h);
+	//printf("%d %d", w, h);
     // check width and height
     if (h < 1 || w < 1) {
         fprintf(stderr, "Error: Invalid dimensions.");
@@ -234,13 +234,11 @@ int main(int argc, char** argv)
         glClear(GL_COLOR_BUFFER_BIT);
 
         mat4x4_identity(m);
-        //mat4x4_rotate_Z(m, m, (float) glfwGetTime());
         mat4x4_ortho(p, -ratio, ratio, 1.f, -1.f, -1.f, 1.f);
         mat4x4_mul(mvp, p, m);
 
         glUseProgram(program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
 		
 		glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
 		glVertexAttribPointer(texcoord_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) (sizeof(float) * 2));
@@ -325,31 +323,31 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			case GLFW_KEY_ESCAPE:
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 				break;
-			case GLFW_KEY_UP:
+			case GLFW_KEY_UP: // translate up
 				vertices[0].position[1] -= 0.05;
 				vertices[1].position[1] -= 0.05;
 				vertices[2].position[1] -= 0.05;
 				vertices[3].position[1] -= 0.05;
 				break;
-			case GLFW_KEY_RIGHT:
+			case GLFW_KEY_RIGHT: // translate right
 				vertices[0].position[0] += 0.05;
 				vertices[1].position[0] += 0.05;
 				vertices[2].position[0] += 0.05;
 				vertices[3].position[0] += 0.05;
 				break;
-			case GLFW_KEY_DOWN:
+			case GLFW_KEY_DOWN: // translate down
 				vertices[0].position[1] += 0.05;
 				vertices[1].position[1] += 0.05;
 				vertices[2].position[1] += 0.05;
 				vertices[3].position[1] += 0.05;
 				break;
-			case GLFW_KEY_LEFT:
+			case GLFW_KEY_LEFT: // translate left
 				vertices[0].position[0] -= 0.05;
 				vertices[1].position[0] -= 0.05;
 				vertices[2].position[0] -= 0.05;
 				vertices[3].position[0] -= 0.05;
 				break;
-			case GLFW_KEY_W:
+			case GLFW_KEY_X: // scale larger
 				vertices[0].position[0] *= 1.05;
 				vertices[0].position[1] *= 1.05;
 				vertices[1].position[0] *= 1.05;
@@ -359,7 +357,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				vertices[3].position[0] *= 1.05;
 				vertices[3].position[1] *= 1.05;
 				break;
-			case GLFW_KEY_S:
+			case GLFW_KEY_Z: // scale smaller
 				vertices[0].position[0] *= 0.95;
 				vertices[0].position[1] *= 0.95;
 				vertices[1].position[0] *= 0.95;
@@ -369,19 +367,31 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				vertices[3].position[0] *= 0.95;
 				vertices[3].position[1] *= 0.95;
 				break;
-			case GLFW_KEY_D:
-				vertices[0].position[0] += 0.05;
-				vertices[3].position[0] += 0.05;
-				vertices[2].position[0] += -0.05;
-				vertices[1].position[0] += -0.05;
+			case GLFW_KEY_W: // shear left up, right down
+				vertices[0].position[1] += -0.05;
+				vertices[1].position[1] += -0.05;
+				vertices[2].position[1] += +0.05;
+				vertices[3].position[1] += +0.05;
 				break;
-			case GLFW_KEY_A:
+			case GLFW_KEY_D: // shear top right, bottom left
 				vertices[0].position[0] += -0.05;
-				vertices[3].position[0] += -0.05;
-				vertices[2].position[0] += 0.05;
 				vertices[1].position[0] += 0.05;
+				vertices[2].position[0] += 0.05;
+				vertices[3].position[0] += -0.05;
 				break;
-			case GLFW_KEY_E:
+			case GLFW_KEY_S: // shear right up, left down
+				vertices[0].position[1] += 0.05;
+				vertices[1].position[1] += 0.05;
+				vertices[2].position[1] += -0.05;
+				vertices[3].position[1] += -0.05;
+				break;
+			case GLFW_KEY_A: // shear bottom right, top left
+				vertices[0].position[0] += 0.05;
+				vertices[1].position[0] += -0.05;
+				vertices[2].position[0] += -0.05;
+				vertices[3].position[0] += 0.05;
+				break;
+			case GLFW_KEY_E: // rotate clockwise
 				centerx = (vertices[0].position[0] + vertices[2].position[0]) / 2;
 				centery = (vertices[0].position[1] + vertices[2].position[1]) / 2;
 				
@@ -405,7 +415,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				vertices[3].position[0] = tempx;
 				vertices[3].position[1] = tempy;
 				break;
-			case GLFW_KEY_Q:
+			case GLFW_KEY_Q: // rotate counter clockwise
 				centerx = (vertices[0].position[0] + vertices[2].position[0]) / 2;
 				centery = (vertices[0].position[1] + vertices[2].position[1]) / 2;
 				
@@ -429,9 +439,9 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				vertices[3].position[0] = tempx;
 				vertices[3].position[1] = tempy;
 				break;
-			default:
+			default: // 
 				if (action != GLFW_REPEAT)
-					printf("Invalid key.\n");
+					printf("Invalid key: '%c'.\n", key);
 				break;
 		}
 	}
