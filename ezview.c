@@ -1,10 +1,17 @@
+/* 
+ * File:   ezview.c
+ * Author: Matthew
+ *
+ * Created on December 6, 2016, 4:24 PM
+ */
+
 #define GLFW_DLL 1
 
 #define GL_GLEXT_PROTOTYPES
 #include <GLES2/gl2.h>
 #include <GLFW/glfw3.h>
 
-#include "deps/linmath.h"
+#include "linmath.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,10 +20,6 @@
 #include <assert.h>
 
 #define CHANNEL_SIZE 255
-
-static inline float sqr(float v) {
-    return v*v;
-}
 
 typedef struct {
 	float position[2];
@@ -83,7 +86,7 @@ int main(int argc, char** argv)
     }
     
     // open source file
-    sourcefp = fopen(argv[1], "r");
+    sourcefp = fopen(argv[1], "rb");
     
     // check that source exists
     if (!sourcefp) {
@@ -123,7 +126,7 @@ int main(int argc, char** argv)
     // get width and height
     fscanf(sourcefp, "%d", &w);
     fscanf(sourcefp, "%d", &h);
-	//printf("%d %d", w, h);
+	
     // check width and height
     if (h < 1 || w < 1) {
         fprintf(stderr, "Error: Invalid dimensions.");
@@ -171,10 +174,7 @@ int main(int argc, char** argv)
     glfwSetKeyCallback(window, key_callback);
 
     glfwMakeContextCurrent(window);
-    // gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     glfwSwapInterval(1);
-
-    // NOTE: OpenGL error checks have been omitted for brevity
 
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
@@ -196,7 +196,6 @@ int main(int argc, char** argv)
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
-    // more error checking! glLinkProgramOrDie!
 
     mvp_location = glGetUniformLocation(program, "MVP");
     assert(mvp_location != -1);
@@ -264,7 +263,7 @@ int main(int argc, char** argv)
 void read_data_to_buffer()
 {
     Color color;
-    
+	
     // if input is P3
     if (format == '3') {
         for(int i=0; i<(h*w); i++) {
@@ -283,16 +282,16 @@ void read_data_to_buffer()
         }
         
     // if input is P6
-    } else {
-        for(int i=0; i<(h*w); i++) {
-            // reads chars into Color color's rgb spots
-			color.r = (unsigned char) fgetc(sourcefp);
-			color.g = (unsigned char) fgetc(sourcefp);
-			color.b = (unsigned char) fgetc(sourcefp);
-            // puts Color into image buffer
-            image[i] = color;
-        }
-    }
+	} else {
+		for(int i=0; i<(h*w); i++) {
+			// reads chars into Color color's rgb spots
+			color.r = fgetc(sourcefp);
+			color.g = fgetc(sourcefp);
+			color.b = fgetc(sourcefp);
+			// puts Color into image buffer
+			image[i] = color;
+		}
+	}
 }
 
 // skips white space in file
@@ -464,4 +463,3 @@ void glCompileShaderOrDie(GLuint shader)
 		exit(1);
 	}
 }
-
