@@ -11,8 +11,6 @@
 #include <GLES2/gl2.h>
 #include <GLFW/glfw3.h>
 
-#include "linmath.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -47,10 +45,10 @@ static void key_callback(GLFWwindow*, int, int, int, int);
 void glCompileShaderOrDie(GLuint);
 
 Vertex vertices[] = {
-	{{1, -1}, {0.99999, 0}},
-	{{1, 1},  {0.99999, 0.99999}},
-	{{-1, 1}, {0, 0.99999}},
-	{{-1, -1}, {0, 0}}
+	{{1, -1}, {0.99999, 0.99999}},
+	{{1, 1},  {0.99999, 0}},
+	{{-1, 1}, {0, 0}},
+	{{-1, -1}, {0, 0.99999}}
 };
 
 const GLubyte indices[] = {
@@ -59,13 +57,12 @@ const GLubyte indices[] = {
 };
 
 static const char* vertex_shader_text =
-"uniform mat4 MVP;\n"
 "attribute vec2 TexCoordIn;\n"
-"attribute vec2 vPos;\n"
+"attribute vec4 vPos;\n"
 "varying lowp vec2 TexCoordOut;\n"
 "void main()\n"
 "{\n"
-"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
+"    gl_Position = vPos;\n"
 "    TexCoordOut = TexCoordIn;\n"
 "}\n";
 
@@ -197,9 +194,6 @@ int main(int argc, char** argv)
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
 
-    mvp_location = glGetUniformLocation(program, "MVP");
-    assert(mvp_location != -1);
-
     vpos_location = glGetAttribLocation(program, "vPos");
     assert(vpos_location != -1);
 
@@ -222,22 +216,14 @@ int main(int argc, char** argv)
 
     while (!glfwWindowShouldClose(window)) {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        float ratio;
         int width, height;
-        mat4x4 m, p, mvp;
 
         glfwGetFramebufferSize(window, &width, &height);
-        ratio = width / (float) height;
 
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        mat4x4_identity(m);
-        mat4x4_ortho(p, -ratio, ratio, 1.f, -1.f, -1.f, 1.f);
-        mat4x4_mul(mvp, p, m);
-
         glUseProgram(program);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
 		
 		glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 0);
 		glVertexAttribPointer(texcoord_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) (sizeof(float) * 2));
@@ -323,10 +309,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 				break;
 			case GLFW_KEY_UP: // translate up
-				vertices[0].position[1] -= 0.05;
-				vertices[1].position[1] -= 0.05;
-				vertices[2].position[1] -= 0.05;
-				vertices[3].position[1] -= 0.05;
+				vertices[0].position[1] += 0.05;
+				vertices[1].position[1] += 0.05;
+				vertices[2].position[1] += 0.05;
+				vertices[3].position[1] += 0.05;
 				break;
 			case GLFW_KEY_RIGHT: // translate right
 				vertices[0].position[0] += 0.05;
@@ -335,10 +321,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				vertices[3].position[0] += 0.05;
 				break;
 			case GLFW_KEY_DOWN: // translate down
-				vertices[0].position[1] += 0.05;
-				vertices[1].position[1] += 0.05;
-				vertices[2].position[1] += 0.05;
-				vertices[3].position[1] += 0.05;
+				vertices[0].position[1] -= 0.05;
+				vertices[1].position[1] -= 0.05;
+				vertices[2].position[1] -= 0.05;
+				vertices[3].position[1] -= 0.05;
 				break;
 			case GLFW_KEY_LEFT: // translate left
 				vertices[0].position[0] -= 0.05;
@@ -394,30 +380,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				centerx = (vertices[0].position[0] + vertices[2].position[0]) / 2;
 				centery = (vertices[0].position[1] + vertices[2].position[1]) / 2;
 				
-				tempx = ((vertices[0].position[0] - centerx) * cos(angle) - (vertices[0].position[1] - centery) * sin(angle)) + centerx;
-				tempy = ((vertices[0].position[0] - centerx) * sin(angle) + (vertices[0].position[1] - centery) * cos(angle)) + centery;
-				vertices[0].position[0] = tempx;
-				vertices[0].position[1] = tempy;
-				
-				tempx = ((vertices[1].position[0] - centerx) * cos(angle) - (vertices[1].position[1] - centery) * sin(angle)) + centerx;
-				tempy = ((vertices[1].position[0] - centerx) * sin(angle) + (vertices[1].position[1] - centery) * cos(angle)) + centery;
-				vertices[1].position[0] = tempx;
-				vertices[1].position[1] = tempy;
-				
-				tempx = ((vertices[2].position[0] - centerx) * cos(angle) - (vertices[2].position[1] - centery) * sin(angle)) + centerx;
-				tempy = ((vertices[2].position[0] - centerx) * sin(angle) + (vertices[2].position[1] - centery) * cos(angle)) + centery;
-				vertices[2].position[0] = tempx;
-				vertices[2].position[1] = tempy;
-				
-				tempx = ((vertices[3].position[0] - centerx) * cos(angle) - (vertices[3].position[1] - centery) * sin(angle)) + centerx;
-				tempy = ((vertices[3].position[0] - centerx) * sin(angle) + (vertices[3].position[1] - centery) * cos(angle)) + centery;
-				vertices[3].position[0] = tempx;
-				vertices[3].position[1] = tempy;
-				break;
-			case GLFW_KEY_Q: // rotate counter clockwise
-				centerx = (vertices[0].position[0] + vertices[2].position[0]) / 2;
-				centery = (vertices[0].position[1] + vertices[2].position[1]) / 2;
-				
 				tempx = ((vertices[0].position[0] - centerx) * cos(-angle) - (vertices[0].position[1] - centery) * sin(-angle)) + centerx;
 				tempy = ((vertices[0].position[0] - centerx) * sin(-angle) + (vertices[0].position[1] - centery) * cos(-angle)) + centery;
 				vertices[0].position[0] = tempx;
@@ -435,6 +397,30 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				
 				tempx = ((vertices[3].position[0] - centerx) * cos(-angle) - (vertices[3].position[1] - centery) * sin(-angle)) + centerx;
 				tempy = ((vertices[3].position[0] - centerx) * sin(-angle) + (vertices[3].position[1] - centery) * cos(-angle)) + centery;
+				vertices[3].position[0] = tempx;
+				vertices[3].position[1] = tempy;
+				break;
+			case GLFW_KEY_Q: // rotate counter clockwise
+				centerx = (vertices[0].position[0] + vertices[2].position[0]) / 2;
+				centery = (vertices[0].position[1] + vertices[2].position[1]) / 2;
+				
+				tempx = ((vertices[0].position[0] - centerx) * cos(angle) - (vertices[0].position[1] - centery) * sin(angle)) + centerx;
+				tempy = ((vertices[0].position[0] - centerx) * sin(angle) + (vertices[0].position[1] - centery) * cos(angle)) + centery;
+				vertices[0].position[0] = tempx;
+				vertices[0].position[1] = tempy;
+				
+				tempx = ((vertices[1].position[0] - centerx) * cos(angle) - (vertices[1].position[1] - centery) * sin(angle)) + centerx;
+				tempy = ((vertices[1].position[0] - centerx) * sin(angle) + (vertices[1].position[1] - centery) * cos(angle)) + centery;
+				vertices[1].position[0] = tempx;
+				vertices[1].position[1] = tempy;
+				
+				tempx = ((vertices[2].position[0] - centerx) * cos(angle) - (vertices[2].position[1] - centery) * sin(angle)) + centerx;
+				tempy = ((vertices[2].position[0] - centerx) * sin(angle) + (vertices[2].position[1] - centery) * cos(angle)) + centery;
+				vertices[2].position[0] = tempx;
+				vertices[2].position[1] = tempy;
+				
+				tempx = ((vertices[3].position[0] - centerx) * cos(angle) - (vertices[3].position[1] - centery) * sin(angle)) + centerx;
+				tempy = ((vertices[3].position[0] - centerx) * sin(angle) + (vertices[3].position[1] - centery) * cos(angle)) + centery;
 				vertices[3].position[0] = tempx;
 				vertices[3].position[1] = tempy;
 				break;
